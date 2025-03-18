@@ -2,7 +2,7 @@
 
 A serverless contact form solution built with AWS services including API Gateway, Lambda, and DynamoDB.
 
-![Architecture Diagram](arc.jpg)
+![Architecture Diagram](arc.png)
 
 ## Project Overview
 

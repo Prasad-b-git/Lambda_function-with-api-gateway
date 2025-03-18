@@ -6,12 +6,12 @@ A serverless contact form solution built with AWS services including API Gateway
 
 ## Project Overview
 
-This project implements a modern, responsive contact form that stores user submissions in a DynamoDB database through a serverless architecture. The solution uses AWS Lambda for backend processing and API Gateway for secure API access.
+This project implements a modern, responsive contact form that stores user submissions in a DynamoDB database through a serverless architecture. The solution uses AWS Lambda for both frontend serving and backend processing, with API Gateway for secure API access.
 
 ## Features
 
 - Modern, responsive contact form with gradient styling
-- Serverless backend processing with AWS Lambda
+- Single Lambda function for both serving HTML and processing form submissions
 - Data persistence using Amazon DynamoDB
 - Secure API access with API Gateway and API key authentication
 - Form validation and user feedback
@@ -22,11 +22,10 @@ This project implements a modern, responsive contact form that stores user submi
 
 The solution uses the following AWS services:
 
-1. **Amazon S3**: Hosts the static website files (HTML, CSS, JavaScript)
-2. **Amazon API Gateway**: Provides secure API endpoints with API key authentication
-3. **AWS Lambda**: Processes form submissions and interacts with DynamoDB
-4. **Amazon DynamoDB**: Stores contact form submissions
-5. **IAM**: Manages permissions between services
+1. **Amazon API Gateway**: Provides secure API endpoints with API key authentication
+2. **AWS Lambda**: Serves the HTML frontend and processes form submissions
+3. **Amazon DynamoDB**: Stores contact form submissions
+4. **IAM**: Manages permissions between services
 
 ## Setup Instructions
 
@@ -43,9 +42,12 @@ The solution uses the following AWS services:
 #### 2. Lambda Function Setup
 1. Create a new Lambda function
 2. Upload the provided Lambda code (`lambda_function.py`)
-3. Set environment variables:
+3. Create the following HTML files in the same directory as your Lambda function:
+   - `contactus.html`: Main contact form
+   - `success.html`: Success page shown after form submission
+4. Set environment variables:
    - `DYNAMODB_TABLE`: Name of your DynamoDB table (default is "Users")
-4. Add the following permissions to the Lambda execution role:
+5. Add the following permissions to the Lambda execution role:
    - `AmazonDynamoDBFullAccess` (or a more restrictive custom policy)
 
 #### 3. API Gateway Setup
@@ -59,26 +61,25 @@ The solution uses the following AWS services:
 5. Deploy the API to a stage (e.g., "dev" or "prod")
 6. Enable CORS for the API
 
-#### 4. Frontend Setup
-1. Update the API endpoint URL and API key in the HTML file:
+#### 4. Frontend Integration
+1. Update the API endpoint URL and API key in the contactus.html file:
    ```javascript
    const API_ENDPOINT = 'YOUR_API_GATEWAY_URL';
    const API_KEY = 'YOUR_API_KEY';
    ```
-2. Upload the HTML file to an S3 bucket configured for static website hosting or your preferred hosting service
 
 ### Configuration Files
 
 The project includes the following files:
 
-- `contactus.html`: The main contact form HTML file
-- `success.html`: Success page displayed after form submission
-- `lambda_function.py`: AWS Lambda function code
+- `contactus.html`: The main contact form HTML file (served by Lambda)
+- `success.html`: Success page displayed after form submission (served by Lambda)
+- `lambda_function.py`: AWS Lambda function code that handles both frontend and backend
 - `arc.jpg`: Architecture diagram of the solution
 
 ## Usage
 
-1. Access the contact form through your deployed URL
+1. Access the contact form through your API Gateway URL
 2. Fill out the form with your information
 3. Submit the form
 4. Upon successful submission, you'll be redirected to a success page
@@ -105,22 +106,25 @@ You can customize the following aspects of the project:
 ### Common Issues
 
 1. **Form submission fails**:
-   - Verify that the API key is correct
-   - Check that CORS is properly configured
-   - Ensure the Lambda function has the necessary permissions
+   - Verify that the API key is correct and properly included in requests
+   - Check that CORS is properly configured in API Gateway
+   - Ensure the Lambda function has the necessary permissions for DynamoDB
 
 2. **Lambda function errors**:
    - Check CloudWatch Logs for error details
-   - Verify that the DynamoDB table exists and is accessible
+   - Verify that the HTML files are in the same directory as the Lambda function
+   - Ensure the DynamoDB table exists and is accessible
 
 3. **API Gateway issues**:
    - Ensure the API is properly deployed to a stage
    - Verify that the API key requirement is configured correctly
+   - Check that the Lambda function is properly integrated with API Gateway
+
+4. **Cannot access the form in browser**:
+   - Make sure your JavaScript code includes the API key in the headers
+   - Confirm that the browser is making requests to the correct API Gateway URL
+   - Verify API Gateway configuration allows browser requests
 
 ## Project by
 
 Prasad Bandagale
-
-## License
-
-[Specify your license here]
